@@ -54,17 +54,14 @@ CREATE DATABASE simple_demo CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 修改 src/main/resources/application.yml 文件：
 
 **配置数据库连接：**
-
-YAML
-
+```YAML
 spring:  
   datasource:  
     url: jdbc:mysql://localhost:3306/simple\_demo?useSSL=false\&serverTimezone=UTC  
     username:       \# 你的数据库用户名  
     password:     \# 你的数据库密码
-
-配置 API Key：  
-设置环境变量：
+```
+配置 API Key,设置环境变量：
 ```YAML
 \# 方式一：直接修改 yml (不推荐提交到 Git)  
 ZHIPU\_API\_KEY: "你的key.xxxxxxxx"
@@ -72,15 +69,14 @@ ZHIPU\_API\_KEY: "你的key.xxxxxxxx"
 \# 方式二：设置系统环境变量 (推荐)  
 \# Windows: set ZHIPU\_API\_KEY=你的key  
 \# Linux/Mac: export ZHIPU\_API\_KEY=你的key
-
+```
 ### **4\. 启动项目**
 
 在项目根目录下运行：
 
-Bash
-
+```Bash
 mvn spring-boot:run
-
+```
 或者在 IDEA 中直接运行主启动类。
 
 ### **5\. 访问系统**
@@ -92,7 +88,7 @@ mvn spring-boot:run
 
 ## **📂 项目结构说明**
 
-Plaintext
+```Plaintext
 
 src/main/java/com/example/demo  
 ├── config/             \# WebMvc 配置 (资源映射, 拦截器等)  
@@ -104,7 +100,7 @@ src/main/java/com/example/demo
 │   └── ...  
 └── utils/  
     └── TextSplitter.java \# 文本切分工具类
-
+```
 ## **⚙️ 关键配置参数**
 
 在 application.yml 中可以调整以下参数：
