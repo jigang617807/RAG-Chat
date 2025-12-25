@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能工作空间</title>
+    <style>
+        /* =======================================
+           1. 全局样式 (Body & 布局)
+           ======================================= */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 工作空间容器 */
+        .workspace {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* =======================================
+           2. 左侧侧边栏 (Sidebar)
+           ======================================= */
+        .sidebar {
+            width: 280px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 2.1 头像区域 */
+        .avatar-box {
+            text-align: center;
+            padding: 10px 0 30px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .avatar-box img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #3498db;
+        }
+
+        .username {
+            margin-top: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #ecf0f1;
+        }
+
+        /* 2.2 导航按钮 */
+        .sidebar a {
+            text-decoration: none;
+            /* 保持导航按钮的边距 */
+            margin: 5px 20px;
+        }
+
+        .nav-btn, .logout-btn {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .nav-btn {
+            background-color: transparent;
+            color: #ecf0f1;
+        }
+
+        .nav-btn:hover {
+            background-color: #34495e;
+            transform: translateX(5px);
+        }
+
+        /* 2.3 退出登录按钮 (修正居中 CSS) */
+
+        /* 关键修改 1: 确保 a 标签将按钮推到底部，并使用 Flex 居中 */
+        a[href="/auth/logout"] {
+            margin-top: auto;
+            margin: auto 0 0 0; /* 移除其他边距，但保持 margin-top: auto */
+            display: flex;
+            justify-content: center; /* 水平居中 */
+            align-items: center;
+            padding: 20px 0; /* 增加底部和顶部的空间 */
+        }
+
+        /* 关键修改 2: 退出登录按钮本身 */
+        .logout-btn {
+            background-color: #e74c3c;
+            color: white;
+            width: 80%; /* 按钮宽度 */
+            text-align: center;
+            /* 移除 margin: auto，让父级 a (flex) 居中 */
+            margin: 0;
+            padding: 12px 15px; /* 保持 padding */
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+
+        /* =======================================
+           3. 主内容区 (Main Area)
+           ======================================= */
+        .main-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #ffffff;
+        }
+        /* ... (以下聊天框等样式未变，略去以保持简洁) ... */
+
+        .chat-box {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #fcfcfc;
+            border-bottom: 1px solid #eee;
+        }
+
+        .chat-content {
+            padding-bottom: 10px;
+        }
+
+        .empty-tip {
+            text-align: center;
+            color: #95a5a6;
+            font-size: 1.1em;
+            margin-top: 100px;
+            line-height: 1.8;
+        }
+
+        .user-message {
+            margin: 15px 0;
+            text-align: right;
+        }
+        .user-message span {
+            display: inline-block;
+            padding: 12px 18px;
+            background: #3498db;
+            color: white;
+            border-radius: 20px 20px 5px 20px;
+            max-width: 70%;
+            font-size: 15px;
+            word-wrap: break-word;
+        }
+
+        .bot-message {
+            margin: 15px 0;
+            text-align: left;
+        }
+        .bot-message span {
+            display: inline-block;
+            padding: 12px 18px;
+            background: #ecf0f1;
+            color: #333;
+            border-radius: 20px 20px 20px 5px;
+            max-width: 70%;
+            font-size: 15px;
+            word-wrap: break-word;
+        }
+
+        .input-area {
+            display: flex;
+            padding: 15px 20px;
+            gap: 10px;
+            align-items: center;
+            background-color: #ffffff;
+        }
+
+        .upload-btn {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 24px;
+            line-height: 1;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            flex-shrink: 0;
+        }
+
+        .upload-btn:hover {
+            background-color: #27ae60;
+        }
+
+        #userInput {
+            flex-grow: 1;
+            padding: 12px 18px;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            font-size: 16px;
+            transition: box-shadow 0.2s, border-color 0.2s;
+        }
+
+        #userInput:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+            outline: none;
+        }
+
+        .send-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            flex-shrink: 0;
+        }
+
+        .send-btn:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="workspace">
+
+    <div class="sidebar">
+
+        <div class="avatar-box">
+            <img th:src="${avatarPath}" alt="头像">
+            <div class="username" th:text="${username}">用户名</div>
+        </div>
+
+        <a href="/user/profile">
+            <button class="nav-btn">个人资料维护</button>
+        </a>
+
+        <a href="/doc/list">
+            <button class="nav-btn">文档列表</button>
+        </a>
+
+        <a href="/doc/upload">
+            <button class="nav-btn">上传文档</button>
+        </a>
+
+        <a href="/auth/logout" style="margin-top: auto;">
+            <button class="logout-btn">退出登录</button>
+        </a>
+
+    </div>
+
+    <div class="main-area">
+
+        <div class="chat-box">
+            <div class="chat-content" id="chatDisplay">
+                <p class="empty-tip">
+                    欢迎回来！<br>
+                    你可以在下方输入框向大模型提问。
+                </p>
+            </div>
+        </div>
+
+        <div class="input-area">
+
+            <a href="/doc/upload">
+                <button type="button" class="upload-btn">+</button>
+            </a>
+
+            <input type="text" id="userInput" placeholder="询问任何问题..." onkeypress="if(event.keyCode===13) sendMessage()">
+
+            <button class="send-btn" onclick="sendMessage()">发送</button>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function sendMessage() {
+        const text = document.getElementById("userInput").value.trim();
+        if (!text) return;
+
+        const display = document.getElementById("chatDisplay");
+
+        // 清除空状态提示
+        const tip = document.querySelector(".empty-tip");
+        if (tip) tip.remove();
+
+        // 用户消息 (使用美化后的 class)
+        const userMsgDiv = document.createElement("div");
+        userMsgDiv.className = "user-message";
+        userMsgDiv.innerHTML = `<span>${text}</span>`;
+        display.appendChild(userMsgDiv);
+
+        document.getElementById("userInput").value = "";
+        display.scrollTop = display.scrollHeight;
+
+        // 模拟机器人回复
+        setTimeout(() => {
+            const botMsgDiv = document.createElement("div");
+            botMsgDiv.className = "bot-message";
+            botMsgDiv.innerHTML = `<span>感谢您的提问。由于这是演示页面，我暂时无法给出实际回答。</span>`;
+            display.appendChild(botMsgDiv);
+            display.scrollTop = display.scrollHeight;
+        }, 800);
+    }
+</script>
+
+</body>
+</html>

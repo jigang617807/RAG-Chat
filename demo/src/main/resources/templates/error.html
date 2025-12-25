@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>出错了</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #f5f5f7;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Arial, sans-serif;
+            color: #1d1d1f;
+        }
+
+        .container {
+            width: 460px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px 45px;
+            border-radius: 22px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            text-align: center;
+        }
+
+        .icon {
+            font-size: 55px;
+            margin-bottom: 10px;
+            color: #ff3b30;
+        }
+
+        h2 {
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .msg {
+            font-size: 15px;
+            color: #5e5e62;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .back-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 14px;
+            background: #0071e3;
+            border: none;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: .25s;
+        }
+
+        .back-btn:hover {
+            background: #0a7aff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,113,227,0.25);
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- 错误图标（苹果风） -->
+    <div class="icon">⚠️</div>
+
+    <h2>发生错误</h2>
+
+    <p class="msg" th:text="${message}">
+        出现未知错误，请稍后重试。
+    </p>
+
+    <a href="/auth/home">
+        <button class="back-btn">返回主页</button>
+    </a>
+
+</div>
+
+</body>
+</html>

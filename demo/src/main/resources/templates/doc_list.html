@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的文档</title>
+    <style>
+        /* =======================================
+           1. 全局样式 (Body & 布局)
+           ======================================= */
+        body {
+            background-color: #f4f7f9;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 50px 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+        }
+
+        /* 容器样式 */
+        .container {
+            background-color: #ffffff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+        }
+
+        /* 标题样式 */
+        .container h2 {
+            color: #7952b3;
+            margin-bottom: 30px;
+            font-size: 30px;
+            font-weight: 600;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 15px;
+        }
+
+        /* =======================================
+           2. 表格样式
+           ======================================= */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 30px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+
+        /* 表头 */
+        table th {
+            background-color: #7952b3;
+            color: white;
+            font-weight: 600;
+            padding: 15px 10px;
+            text-align: center; /* ***修改点 1: 表头居中*** */
+            font-size: 16px;
+        }
+
+        /* 表格数据行 */
+        table td {
+            padding: 12px 10px;
+            text-align: center; /* ***修改点 2: 表格内容居中*** */
+            border-bottom: 1px solid #f0f0f0;
+            color: #444;
+            font-size: 14px;
+        }
+
+        /* 斑马纹效果 */
+        table tr:nth-child(even) td {
+            background-color: #f8f8f8;
+        }
+
+        /* 移除表格最后一行底部分割线 */
+        table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* 空文档提示 */
+        .empty-tip {
+            text-align: center !important;
+            padding: 30px !important;
+            color: #999;
+            font-style: italic;
+            font-size: 16px !important;
+        }
+
+        /* =======================================
+           3. 操作按钮
+           ======================================= */
+
+        /* 操作单元格的容器 */
+        table td:last-child {
+            display: flex;
+            gap: 15px; /* ***修改点 3: 增加按钮间距*** */
+            align-items: center;
+            justify-content: center; /* ***修改点 4: 操作按钮组居中*** */
+        }
+
+        /* 通用按钮样式 */
+        .action-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+            text-decoration: none;
+        }
+
+        /* 开始对话按钮 */
+        .start-chat-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .start-chat-btn:hover {
+            background-color: #27ae60;
+        }
+
+        /* 删除按钮 */
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+
+        /* =======================================
+           4. 返回按钮
+           ======================================= */
+
+        /* 返回按钮 (包装在 a 标签内) */
+        .container a[href="/auth/home"] {
+            display: inline-block;
+            width: 30%;
+            text-decoration: none;
+        }
+
+        .back-btn {
+            width: 100%;
+            background-color: #6c757d;
+            color: white;
+            padding: 12px 0;
+            margin-top: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>我的文档</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>文件名</th>
+            <th>上传时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${docs.size() == 0}">
+            <td colspan="3" class="empty-tip">暂无文档，请先上传 PDF</td> </tr>
+
+        <tr th:each="doc : ${docs}">
+            <td th:text="${doc.title}">项目需求文档.pdf</td>
+            <td th:text="${doc.uploadedAt}">2025-11-20 14:30</td>
+            <td>
+                <a th:href="@{'/chat/start?docId=' + ${doc.id}}">
+                    <button class="action-btn start-chat-btn">开始对话</button>
+                </a>
+                <button class="action-btn delete-btn"
+                        th:attr="onclick=|confirmDelete(${doc.id}, '${doc.title}')|">
+                    删除
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a href="/auth/home">
+        <button class="back-btn">返回主页</button>
+    </a>
+
+</div>
+
+<script>
+    function confirmDelete(docId, docTitle) {
+        if (!confirm(`确定要删除文档 "${docTitle}" (ID: ${docId}) 吗？`)) {
+            return;
+        }
+
+        // 适用于 Java/Spring 后端的删除接口：POST /doc/delete，接收 docId
+        const deleteUrl = '/doc/delete';
+
+        fetch(deleteUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                'docId': docId
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                alert(`文档 "${docTitle}" 删除成功！`);
+                window.location.reload();
+            } else {
+                response.text().then(errorMessage => {
+                    alert(`删除失败: ${errorMessage || response.statusText}`);
+                }).catch(() => {
+                    alert(`删除失败: ${response.statusText}`);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('删除请求出错:', error);
+            alert('网络或服务器错误，删除失败。请检查控制台。');
+        });
+    }
+</script>
+
+</body>
+</html>

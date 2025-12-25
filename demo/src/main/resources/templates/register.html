@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+
+    <style>
+        /* =======================================
+           1. 全局样式 (Body & 字体)
+           ======================================= */
+        body {
+            /* 使用柔和的背景色 */
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; /* 选用现代字体 */
+            color: #333;
+        }
+
+        /* =======================================
+           2. 卡片容器 (form 外层的 div.card)
+           ======================================= */
+        .card {
+            background-color: #ffffff;
+            /* 增加卡片阴影，使其浮起 */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* 阴影更明显 */
+            border-radius: 15px; /* 更大的圆角 */
+            padding: 40px;
+            width: 100%;
+            max-width: 420px; /* 限制宽度 */
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.18); /* 悬停时阴影加深 */
+        }
+
+        /* =======================================
+           3. 标题 (h2)
+           ======================================= */
+        .card h2 {
+            text-align: center;
+            color: #007bff; /* 使用清爽的蓝色作为主色调 */
+            margin-bottom: 30px;
+            font-size: 30px;
+            font-weight: 700;
+            /* 移除底部分割线，让标题更简洁 */
+        }
+
+        /* =======================================
+           4. 表单元素 (Label & Input)
+           ======================================= */
+        form label {
+            display: block;
+            margin-bottom: 6px;
+            margin-top: 18px;
+            font-weight: 500;
+            color: #444;
+            font-size: 14px;
+        }
+
+        form input[type="text"],
+        form input[type="number"],
+        form input[type="password"] {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd; /* 边框更细致 */
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        form input:focus {
+            border-color: #007bff; /* 聚焦时边框变色为蓝色 */
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15); /* 聚焦时的光晕效果 */
+            outline: none;
+        }
+
+        /* =======================================
+           5. 提交按钮 (button.btn)
+           ======================================= */
+        .btn {
+            width: 100%;
+            background-color: #007bff; /* 突出显示的主色调 */
+            color: white;
+            padding: 14px 20px;
+            margin-top: 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: background-color 0.3s ease, transform 0.1s;
+        }
+
+        .btn:hover {
+            background-color: #0056b3; /* 悬停时颜色变深 */
+        }
+
+        .btn:active {
+            transform: scale(0.98); /* 点击时的微小按压感 */
+        }
+
+        /* =======================================
+           6. 错误信息 (p.error)
+           ======================================= */
+        .error {
+            color: #dc3545; /* 醒目的红色 */
+            text-align: center;
+            margin-top: 15px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        /* =======================================
+           7. 页脚/链接区 (div.footer)
+           ======================================= */
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .footer a {
+            color: #007bff; /* 链接使用主色调 */
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+    <h2>创建你的账号</h2>
+
+    <form action="/auth/register-page" method="post">
+
+        <label>用户名</label>
+        <input type="text" name="username" placeholder="请输入用户名">
+
+        <label>性别</label>
+        <input type="text" name="gender" placeholder="例如：男 / 女">
+
+        <label>年龄</label>
+        <input type="number" name="age" placeholder="请输入年龄">
+
+        <label>手机号</label>
+        <input type="text" name="phone" placeholder="请输入手机号" required>
+
+        <label>密码</label>
+        <input type="password" name="password" placeholder="请输入密码" required>
+
+        <button type="submit" class="btn">立即注册</button>
+
+        <p class="error" th:text="${error}"></p>
+
+        <div class="footer">
+            已有账号？ <a href="/auth/login">去登录</a>
+        </div>
+
+    </form>
+
+</div>
+
+</body>
+</html>

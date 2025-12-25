@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人资料</title>
+    <style>
+        /* =======================================
+           1. 全局样式 (Body & 布局)
+           ======================================= */
+        body {
+            background-color: #f4f7f9; /* 柔和的浅灰色背景 */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* 保持从顶部开始排列 */
+            min-height: 100vh;
+            margin: 0;
+            padding: 50px 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+        }
+
+        /* 容器样式 (取代 .container) */
+        .container {
+            background-color: #ffffff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            text-align: center; /* 使标题和头像居中 */
+        }
+
+        /* 标题样式 */
+        .container h2 {
+            color: #7952b3; /* 柔和的紫色 */
+            margin-bottom: 25px;
+            font-size: 30px;
+            font-weight: 600;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 15px;
+        }
+
+        /* =======================================
+           2. 头像和上传区域
+           ======================================= */
+
+        /* 现有头像 */
+        .container > div img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%; /* 圆形 */
+            border: 4px solid #7952b3; /* 主色调边框 */
+            object-fit: cover;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px !important;
+        }
+
+        /* 上传表单 */
+        .container form {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+
+        /* 预览图 */
+        #previewImg {
+            width: 100px;
+            height: 100px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            margin: 15px auto !important; /* 水平居中 */
+            display: none !important; /* 初始隐藏，由 JS 显示 */
+        }
+
+        /* 文件选择器的父元素（用于定位） */
+        input[type="file"] {
+            display: block;
+            margin: 15px auto 5px auto;
+            width: fit-content;
+            color: #7952b3;
+            font-size: 15px;
+        }
+
+        /* =======================================
+           3. 基本资料表单
+           ======================================= */
+
+        /* 表单输入行 */
+        form > br {
+            display: none; /* 移除 br 标签，用 CSS 控制布局 */
+        }
+
+        /* 统一处理输入和标签 */
+        .profile-field {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .profile-field label {
+            width: 80px;
+            font-weight: 500;
+            color: #555;
+            font-size: 15px;
+        }
+
+        form input[type="text"],
+        form input[type="number"] {
+            flex-grow: 1;
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        form input:focus {
+            border-color: #7952b3; /* 聚焦时边框变色为紫色 */
+            box-shadow: 0 0 0 3px rgba(121, 82, 179, 0.2);
+            outline: none;
+        }
+
+        /* =======================================
+           4. 按钮样式
+           ======================================= */
+
+        /* 提交按钮 */
+        .container button[type="submit"] {
+            width: 100%;
+            background-color: #7952b3; /* 主色调：紫色 */
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .container button[type="submit"]:hover {
+            background-color: #5a4087;
+        }
+
+        /* 返回按钮 (包装在 a 标签内) */
+        .container a > button {
+            width: 100%;
+            background-color: #6c757d; /* 灰色，次要操作 */
+            color: white;
+            padding: 12px 0;
+            margin-top: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .container a > button:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>个人资料</h2>
+
+    <div>
+        <img th:src="${user.avatarPath}" alt="用户头像">
+    </div>
+
+    <form action="/user/avatar" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*" onchange="preview(this)">
+        <img id="previewImg" alt="预览图">
+        <button type="submit">上传头像</button>
+    </form>
+
+    <script>
+        function preview(input){
+            let file = input.files[0];
+            const previewImg = document.getElementById("previewImg");
+
+            if (file) {
+                previewImg.src = URL.createObjectURL(file);
+                previewImg.style.display = "block"; // 显示预览图
+            } else {
+                previewImg.style.display = "none";
+            }
+        }
+    </script>
+
+    <form action="/user/update" method="post">
+        <div class="profile-field">
+            <label>性别：</label>
+            <input type="text" name="gender" th:value="${user.gender}" placeholder="例如：男 / 女">
+        </div>
+
+        <div class="profile-field">
+            <label>年龄：</label>
+            <input type="number" name="age" th:value="${user.age}" placeholder="请输入年龄">
+        </div>
+
+        <div class="profile-field">
+            <label>手机号：</label>
+            <input type="text" name="phone" th:value="${user.phone}" placeholder="请输入手机号">
+        </div>
+
+        <button type="submit">更新资料</button>
+    </form>
+
+    <a href="/auth/home"><button>返回主页</button></a>
+
+</div>
+</body>
+</html>

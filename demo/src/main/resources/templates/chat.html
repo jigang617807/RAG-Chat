@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📄 文档问答</title>
+    <script src="https://unpkg.com/event-source-polyfill/src/eventsource.min.js"></script>
+
+    <style>
+        /* =======================================
+           1. 全局样式 & 布局
+           ======================================= */
+        body {
+            background-color: #f4f7f9; /* 柔和浅灰色背景 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+        }
+
+        .container {
+            background-color: #ffffff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 800px; /* 聊天页面宽度较大 */
+            height: 80vh; /* 固定高度，使其可滚动 */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* 隐藏容器溢出内容 */
+        }
+
+        /* 标题区 */
+        .container h2 {
+            text-align: center;
+            color: #7952b3; /* 主色调：紫色 */
+            padding: 20px 0;
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* =======================================
+           2. 聊天区域
+           ======================================= */
+        #chatBox {
+            flex-grow: 1; /* 占据剩余空间 */
+            padding: 20px;
+            overflow-y: auto; /* 允许聊天内容滚动 */
+            /* 滚动条美化 (可选) */
+            scrollbar-width: thin;
+            scrollbar-color: #7952b3 #f4f7f9;
+        }
+
+        /* 消息行 */
+        .msg {
+            display: flex;
+            margin-bottom: 15px;
+            max-width: 85%;
+        }
+
+        /* 用户消息：靠右对齐 */
+        .user-msg {
+            margin-left: auto;
+            justify-content: flex-end;
+        }
+
+        /* AI 消息：靠左对齐 */
+        .ai-msg {
+            margin-right: auto;
+            justify-content: flex-start;
+        }
+
+        /* 消息气泡 */
+        .bubble {
+            padding: 12px 18px;
+            border-radius: 20px;
+            line-height: 1.5;
+            word-wrap: break-word; /* 保证长文本换行 */
+            white-space: pre-wrap; /* 保持流式输出的格式 */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        /* 用户气泡样式 */
+        .user-bubble {
+            background-color: #e0e0e0; /* 浅灰色 */
+            color: #333;
+            border-bottom-right-radius: 5px; /* 尖角效果 */
+        }
+
+        /* AI 气泡样式 */
+        .ai-bubble {
+            background-color: #7952b3; /* 主色调：紫色 */
+            color: white;
+            border-bottom-left-radius: 5px; /* 尖角效果 */
+        }
+
+        /* =======================================
+           3. 输入区域 & 按钮
+           ======================================= */
+        .input-area {
+            padding: 15px 20px;
+            display: flex;
+            border-top: 1px solid #eee;
+            background-color: #f9f9f9;
+        }
+
+        #msg {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            margin-right: 10px;
+            resize: none; /* 禁止用户调整大小 */
+            font-size: 16px;
+            height: 40px;
+            line-height: 20px;
+            transition: border-color 0.3s;
+        }
+
+        #msg:focus {
+            border-color: #7952b3;
+            outline: none;
+        }
+
+        .send-btn {
+            background-color: #7952b3;
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            min-width: 80px;
+        }
+
+        .send-btn:hover {
+            background-color: #5a4087;
+        }
+
+        /* 返回按钮区 */
+        .back-link {
+            text-align: center;
+            padding: 10px 20px;
+            border-top: 1px solid #eee;
+        }
+
+        /* 新增：清除按钮样式 */
+        .clear-btn {
+            background-color: #dc3545; /* 红色用于危险操作 */
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+            margin-right: 10px; /* 与返回按钮保持间距 */
+        }
+
+        .clear-btn:hover {
+            background-color: #c82333;
+        }
+
+        .back-btn {
+            background-color: #6c757d;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>📄 文档问答</h2>
+
+    <div id="chatBox">
+
+        <div th:each="m : ${messages}">
+            <div th:if="${m.role == 'user'}" class="msg user-msg">
+                <div class="bubble user-bubble" th:text="${m.message}"></div>
+            </div>
+
+            <div th:if="${m.role == 'assistant'}" class="msg ai-msg">
+                <div class="bubble ai-bubble" th:text="${m.message}"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="input-area">
+        <textarea id="msg" placeholder="请输入你的问题..." onkeydown="if(event.keyCode===13 && !event.shiftKey) { event.preventDefault(); sendMsg(); }"></textarea>
+        <button class="send-btn" onclick="sendMsg()">发送</button>
+    </div>
+
+    <div class="back-link">
+        <button class="clear-btn" onclick="clearChat()">清除记录</button>
+
+        <a href="/doc/list">
+            <button class="back-btn">返回文档列表</button>
+        </a>
+    </div>
+
+    <input type="hidden" id="convId" th:value="${conversationId}">
+    <input type="hidden" id="docId"  th:value="${documentId}">
+
+</div>
+
+<script>
+    let evtSource = null;
+
+    // 允许按 Enter 键发送消息
+    function handleEnter(event) {
+        if (event.keyCode === 13 && !event.shiftKey) { // 13是Enter键，!event.shiftKey防止Shift+Enter发送
+            event.preventDefault(); // 阻止默认换行行为
+            sendMsg();
+        }
+    }
+    document.getElementById("msg").addEventListener("keydown", handleEnter);
+
+
+    function sendMsg() {
+        const text = document.getElementById("msg").value.trim();
+        if (!text) return;
+
+        const convId = document.getElementById("convId").value;
+        const docId  = document.getElementById("docId").value;
+        const box    = document.getElementById("chatBox");
+
+        /* ===== 1. 添加用户气泡 ===== */
+        const userDiv = document.createElement("div");
+        userDiv.className = "msg user-msg";
+        userDiv.innerHTML = `<div class="bubble user-bubble">${text}</div>`;
+        box.appendChild(userDiv);
+
+        document.getElementById("msg").value = ""; // 清空输入框
+
+        /* ===== 2. 创建 AI 气泡（接收流式输出） ===== */
+        const aiDiv = document.createElement("div");
+        aiDiv.className = "msg ai-msg";
+
+        const aiBubble = document.createElement("div");
+        aiBubble.className = "bubble ai-bubble";
+
+        const aiTextSpan = document.createElement("span");
+        // AI 气泡在收到数据之前显示一个闪烁光标效果 (可选)
+        aiTextSpan.textContent = "▋";
+
+        aiBubble.appendChild(aiTextSpan);
+        aiDiv.appendChild(aiBubble);
+        box.appendChild(aiDiv);
+
+        box.scrollTop = box.scrollHeight; // 滚到底部
+
+        /* ===== 3. 关闭旧 SSE & 发起请求 ===== */
+        if (evtSource) evtSource.close();
+
+        const url = `/chat/ask?conversationId=${convId}&documentId=${docId}&question=${encodeURIComponent(text)}`;
+        evtSource = new EventSourcePolyfill(url);
+
+        let full = "";
+        let isFirstChunk = true;
+
+        evtSource.onmessage = function (e) {
+            if (e.data === "[DONE]") {
+                // 清除光标效果
+                if (aiTextSpan.textContent === "▋") aiTextSpan.textContent = "";
+                evtSource.close();
+                evtSource = null;
+                return;
+            }
+
+            full += e.data;
+
+            if (isFirstChunk) {
+                 aiTextSpan.textContent = ""; // 收到第一个数据块时，清除光标
+                 isFirstChunk = false;
+            }
+
+            aiTextSpan.textContent = full;
+            box.scrollTop = box.scrollHeight; // 实时滚动
+        };
+
+        evtSource.onerror = function(err) {
+            console.error("SSE Error:", err);
+            // 提示用户出错
+            aiTextSpan.textContent += "\n\n(连接中断或服务器错误)";
+            aiTextSpan.style.color = 'red';
+            evtSource.close();
+            evtSource = null;
+        };
+    }
+    /**
+     * 新增：清除当前文档关联的所有聊天记录和对话。
+     */
+    function clearChat() {
+        const docId = document.getElementById("docId").value;
+
+        // 1. 确认删除
+        if (!confirm("确定要清除本次文档问答的所有历史记录吗？")) {
+            return;
+        }
+
+        // 2. 关闭可能正在进行的 SSE 连接
+        if (evtSource) {
+            evtSource.close();
+            evtSource = null;
+        }
+
+        // 3. 发送 POST 请求到后端删除数据
+        const clearUrl = '/chat/clear';
+
+        // 后端依赖 documentId 和 Session 中的 userId 来定位对话
+        fetch(clearUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                // 只发送 documentId
+                'documentId': docId
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                // 4. 清除成功，重定向到新的聊天页面
+                // 重定向到 /chat 接口，后端会根据 documentId 自动创建新的对话
+                window.location.href = `/chat/start?docId=${docId}`;
+            } else {
+                response.text().then(errorMessage => {
+                    alert(`清除记录失败: ${errorMessage || response.statusText}`);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('清除请求出错:', error);
+            alert('网络或服务器错误，清除记录失败。');
+        });
+    }
+
+
+</script>
+
+</body>
+</html>

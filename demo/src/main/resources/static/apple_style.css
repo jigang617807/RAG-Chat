@@ -1,0 +1,260 @@
+/* Apple-like minimal clean style */
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    background: #f5f5f7;
+    padding: 40px 0;
+    color: #1d1d1f;
+}
+
+/* Main container */
+.container {
+    width: 420px;
+    margin: auto;
+    background: #ffffff;
+    padding: 30px 35px;
+    border-radius: 18px;
+    margin-top: 40px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transition: box-shadow .3s ease;
+}
+
+.container:hover {
+    box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+}
+
+/* Title */
+h2 {
+    font-weight: 600;
+    font-size: 24px;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+/* Input Style */
+input {
+    width: 100%;
+    padding: 12px 14px;
+    margin-top: 10px;
+    margin-bottom: 18px;
+    border-radius: 12px;
+    border: 1px solid #d2d2d7;
+    background: #f5f5f7;
+    transition: all .25s ease;
+    font-size: 15px;
+}
+
+input:focus {
+    background: #ffffff;
+    border-color: #0071e3;
+    box-shadow: 0 0 0 4px rgba(0,113,227,0.15);
+    outline: none;
+}
+
+/* Buttons */
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 12px;
+    margin-bottom: 20px;
+    border-radius: 14px;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    background: #0071e3;
+    color: white;
+    transition: all .25s ease;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0077ed;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,113,227,0.25);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* Upload preview: clean rounded */
+#previewImg {
+    border-radius: 14px;
+    border: 1px solid #e5e5e7;
+    padding: 4px;
+}
+
+/* Avatar image */
+img[th\\:src] {
+    border-radius: 50%;
+    border: 2px solid #e5e5e7 !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* Back button container style */
+a button {
+    background: #e5e5e7;
+    color: #1d1d1f;
+}
+
+a button:hover {
+    background: #d2d2d7;
+}
+
+/* Status text */
+.error { color: #ff3b30; font-size: 14px; }
+.success { color: #34c759; font-size: 14px; }
+
+
+/* 整体布局 */
+.workspace {
+    display: flex;
+    height: 100vh;
+    background: #f5f5f7;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Arial;
+}
+
+/* 左侧侧边栏 */
+.sidebar {
+    width: 240px;
+    background: #ffffff;
+    border-right: 1px solid #d2d2d7;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 头像区 */
+.avatar-box img {
+    width: 90px;
+    height: 90px;
+    border-radius: 12px;
+    border: 1px solid #d2d2d7;
+    margin-bottom: 10px;
+}
+
+.username {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 30px;
+}
+
+/* 侧栏按钮 */
+.nav-btn {
+    width: 180px;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: 1px solid #d2d2d7;
+    background: #ffffff;
+    transition: 0.2s;
+}
+
+.nav-btn:hover {
+    background: #f0f0f2;
+}
+
+/* 退出按钮 */
+.logout-btn {
+    width: 180px;
+    margin-top: auto;
+    padding: 10px;
+    border-radius: 10px;
+    background: #e5e5e7;
+    border: none;
+}
+
+.logout-btn:hover {
+    background: #d2d2d7;
+}
+
+/* 右侧主区域 */
+.main-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+}
+
+/* 大模型聊天框 */
+.chat-box {
+    flex: 1;
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #d2d2d7;
+    padding: 30px;
+    position: relative;
+}
+
+.placeholder-text {
+    color: #555;
+    font-size: 18px;
+}
+
+/* 底部输入栏 */
+.input-area {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #d2d2d7;
+    border-radius: 14px;
+    margin-top: 20px;
+    padding: 10px 15px;
+    gap: 10px;
+}
+
+/* 加号按钮（可上传文档） */
+.upload-btn {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 1px solid #0071e3;
+    color: #0071e3;
+    background: white;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.upload-btn:hover {
+    background: #e8f2ff;
+}
+
+/* 输入框 */
+.input-area input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 16px;
+}
+
+/* 发送按钮 */
+.send-btn {
+    padding: 8px 18px;
+    border-radius: 10px;
+    border: none;
+    background: #0071e3;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.send-btn:hover {
+    background: #0a7aff;
+}
+/* 表单分组 */
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    display: block;
+    color: #3a3a3c;
+}
