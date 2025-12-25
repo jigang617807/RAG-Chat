@@ -7,9 +7,9 @@ spring:
 # ------ 新增配置结束 ------
 #  链接数据库
   datasource:
-    url: jdbc:mysql://localhost:3306/simple_demo?useSSL=false&serverTimezone=UTC
-    username: root
-    password: 123456  # 写你的密码
+    url: jdbc:mysql://localhost:3306（自己的端口）/simple_demo?（数据库名）useSSL=false&serverTimezone=UTC
+    username:   # 写你的用户
+    password:   # 写你的密码
 #定义是否由其自动生成数据库！
   jpa:
     hibernate:
@@ -19,9 +19,7 @@ spring:
 #配置API
 
 zhipu:
-  api-key: "69d9b4f79f154b6fb9afa7a70fdbb202.ag70xz362XpCuEE1"
-
-#  embedding模型都要花钱！
+#  embedding模型都要钱
   embedding-model: "embedding-3"
 #  花钱模型
 #  chat-model: "glm-4-plus"
@@ -29,8 +27,8 @@ zhipu:
   chat-model: "glm-4.5-flash"
 
 upload:
-#  dir: D:/javalearning/demo
   dir: .
   root: uploads/
   avatar: uploads/avatar/
+
   docs: uploads/docs/
