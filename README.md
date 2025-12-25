@@ -1,6 +1,6 @@
 # **📄 智能文档问答系统 (RAG Document Q\&A)**
 
-基于 Spring Boot 3 和 智谱AI (ZhipuAI/GLM) 构建的 RAG（检索增强生成）演示项目。该系统允许用户上传 PDF 文档，通过向量检索技术与文档内容进行自然语言对话。
+基于 Spring Boot和 智谱AI (ZhipuAI/GLM) 构建的 RAG（检索增强生成）项目。该系统允许用户上传 PDF 文档，通过向量检索技术与文档内容进行自然语言对话。
 
 ## **✨ 主要功能**
 
@@ -63,12 +63,9 @@ spring:
 ```
 配置 API Key,设置环境变量：
 ```YAML
-\# 方式一：直接修改 yml (不推荐提交到 Git)  
-ZHIPU\_API\_KEY: "你的key.xxxxxxxx"
-
-\# 方式二：设置系统环境变量 (推荐)  
-\# Windows: set ZHIPU\_API\_KEY=你的key  
-\# Linux/Mac: export ZHIPU\_API\_KEY=你的key
+\#设置系统环境变量 (推荐)  
+Windows: set ZHIPU\_API\_KEY=你的key  
+Linux/Mac: export ZHIPU\_API\_KEY=你的key
 ```
 ### **4\. 启动项目**
 
@@ -89,7 +86,6 @@ mvn spring-boot:run
 ## **📂 项目结构说明**
 
 ```Plaintext
-
 src/main/java/com/example/demo  
 ├── config/             \# WebMvc 配置 (资源映射, 拦截器等)  
 ├── controller/         \# 控制层 (Auth, Chat, Document, User)  
@@ -104,12 +100,12 @@ src/main/java/com/example/demo
 ## **⚙️ 关键配置参数**
 
 在 application.yml 中可以调整以下参数：
-
+```
 * zhipu.embedding-model: 嵌入模型，默认 embedding-3。  
 * zhipu.chat-model: 聊天模型，默认 glm-4.5-flash (免费且速度快)。  
 * spring.servlet.multipart.max-file-size: 单个文件上传大小限制，默认 50MB。  
 * upload.dir: 文件存储根目录，默认为当前项目目录 .。
-
+```
 ## **⚠️ 注意事项**
 
 1. **向量检索性能**: 本项目为了演示简便，将 Embedding 向量以 JSON 格式存在 MySQL 中，并在内存中进行余弦相似度计算。**这仅适用于小型演示项目**。如果文档量巨大，请接入 Milvus、PgVector 或 Elasticsearch。  
@@ -117,11 +113,8 @@ src/main/java/com/example/demo
 3. **文件路径**: 上传的文件默认保存在项目根目录下的 uploads/ 文件夹中。
 
 ## **📸 效果预览**
-
 1. **上传文档**: 支持拖拽上传 PDF，后台自动进行文本清洗和切片。  
-2. **对话界面**: 仿 Apple 风格的极简 UI，支持流式输出，体验流畅。  
+2. **对话界面**: 极简 UI，支持流式输出，体验流畅。  
 3. **文档列表**: 查看已上传文档，支持一键删除（同时清理所有相关数据）。
-
 ---
-
 **Enjoy Coding\!** 🎉
