@@ -43,9 +43,8 @@
 
 在 MySQL 中创建一个空的数据库，名称为 simple\_demo。
 
-SQL
-
-CREATE DATABASE simple\_demo CHARACTER SET utf8mb4 COLLATE utf8mb4\_general\_ci;
+```sql
+CREATE DATABASE simple_demo CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 *项目启动时，JPA 的 ddl-auto: update 配置会自动创建所需的数据表 (user, document, document\_chunk, conversation, chat\_message)。*
 
@@ -60,14 +59,12 @@ YAML
 spring:  
   datasource:  
     url: jdbc:mysql://localhost:3306/simple\_demo?useSSL=false\&serverTimezone=UTC  
-    username: root      \# 你的数据库用户名  
-    password: 123456    \# 你的数据库密码
+    username:       \# 你的数据库用户名  
+    password:     \# 你的数据库密码
 
 配置 API Key：  
-你可以直接在 application.yml 中修改，或者更推荐设置环境变量：
-
-YAML
-
+设置环境变量：
+```YAML
 \# 方式一：直接修改 yml (不推荐提交到 Git)  
 ZHIPU\_API\_KEY: "你的key.xxxxxxxx"
 
