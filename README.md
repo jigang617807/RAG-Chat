@@ -1,79 +1,44 @@
-🤖 RAG-Chat: 基于智谱 AI 的智能文档问答系统
-RAG-Chat 是一个轻量级的检索增强生成（Retrieval-Augmented Generation）对话系统。它允许用户上传 PDF 文档构建个人知识库，并利用智谱 AI 的大模型能力进行基于文档上下文的流式问答。
+# 📄 智能文档问答系统 (RAG Document Q&A)
 
-✨ 核心功能 (Key Features)
-1. 🔐 用户认证与安全 (Authentication)
-注册机制：支持用户名/手机号注册，强制密码复杂度校验（英文+数字+特殊字符）。
+基于 Spring Boot  和 智谱AI (ZhipuAI/GLM) 构建的 RAG（检索增强生成）项目。该系统允许用户上传 PDF 文档，通过向量检索技术与文档内容进行自然语言对话。
 
-登录会话：基于 Session 的状态管理。
+## ✨ 主要功能
 
-密码找回：模拟短信验证码流程（控制台输出），验证身份后重置密码。
+* **用户系统**
+    * 注册、登录、注销（BCrypt 密码加密）。
+    * 个人资料管理（修改信息、上传头像）。
+    * 密码重置（模拟短信验证码流程）。
+* **文档管理**
+    * PDF 文件上传与解析（使用 Apache PDFBox）。
+    * 智能文本切分（Text Splitter，支持重叠分块）。
+    * 文档列表查看与删除（级联删除关联的向量数据和对话记录）。
+* **RAG 核心 (Retrieval-Augmented Generation)**
+    * **Embedding**: 使用智谱 `embedding-3` 模型生成文本向量。
+    * **向量存储**: 这里的 Demo 使用 MySQL `JSON` 字段存储向量（注：生产环境建议使用专用向量数据库）。
+    * **向量检索**: 基于余弦相似度（Cosine Similarity）的 Java 内存检索算法。
+* **AI 对话**
+    * 基于 `glm-4.5-flash` 或 `glm-4-plus` 模型。
+    * **流式响应 (SSE)**: 实现打字机效果的实时回答。
+    * 多轮对话上下文记忆。
+    * 聊天记录持久化存储。
 
-权限拦截：全站基于 Session 的登录状态校验。
+## 🛠 技术栈
 
-2. 👤 个人中心 (User Center)
-资料管理：支持修改年龄、性别、电话等基础信息。
+* **后端**: Java 17+, Spring Boot 3.2.0
+* **数据库**: MySQL 8.0 (使用 Spring Data JPA)
+* **AI SDK**: Zhipu AI SDK (`zai-sdk`), DashScope SDK
+* **工具库**: Apache PDFBox (PDF解析), Lombok
+* **前端**: Thymeleaf 模板引擎, HTML5, CSS3 (原生 JS, 无需 Vue/React)
 
-头像管理：支持本地文件系统存储头像，并同步更新数据库。
+## 🚀 快速开始
 
-3. 📚 RAG 知识库管理 (Knowledge Base)
-文档解析：集成 PDFBox 解析上传的 PDF 文件。
+### 1. 环境准备
+* JDK 17 或更高版本
+* Maven 3.6+
+* MySQL 数据库
+* **智谱 AI API Key** (需要自行去 [智谱开放平台](https://open.bigmodel.cn/) 申请)
 
-智能切分 (Smart Chunking)：
-
-采用 带重叠的滑动窗口算法 (Fixed Size + Overlap)。
-
-策略：默认块大小 1000 字符，重叠 200 字符，有效避免上下文语义断裂。
-
-向量化存储：调用智谱 AI Embedding 接口生成向量，并持久化存储。
-
-级联删除：支持事务性删除，一键清理文档记录、向量数据、关联对话及本地文件。
-
-4. 💬 AI 智能对话 (AI Chat)
-上下文检索：基于内存计算 余弦相似度，实时检索 Top 5 最相关的文档切片。
-
-流式响应 (Streaming)：基于 Server-Sent Events (SSE) 技术，实时流式输出智谱 GLM 模型的回复，降低用户等待焦虑。
-
-历史持久化：完整的问答历史记录存入 MySQL，支持基于文档 ID 复用对话上下文。
-
-🛠 技术栈 (Tech Stack)
-后端框架: Java, Spring Boot
-
-数据库: MySQL
-
-AI 模型服务: 智谱 AI (GLM-4 / Embedding-2)
-
-文档处理: Apache PDFBox
-
-通信协议: HTTP, Server-Sent Events (SSE)
-
-🚀 快速开始 (Getting Started)
-1. 环境准备
-JDK 17+
-
-MySQL 8.0+
-
-Maven 3.6+
-
-2. 数据库配置
-在 src/main/resources/application.yaml 中配置您的本地数据库连接：
-
-YAML
-
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/rag_chat?useUnicode=true&characterEncoding=utf-8&useSSL=false
-    username: root
-    password: your_password
-  jpa:
-    hibernate:
-      ddl-auto: update # 开发环境自动建表
-3. AI 模型配置 (环境变量)
-本项目依赖智谱 AI 的 API 服务，不要将 Key 硬编码在代码中。请在 IDEA 或系统的环境变量中添加：
-
-变量名: ZHIPU_API_KEY
-
-变量值: 您的智谱AI_API_KEY (例如: 123456.abcdefg)
-
-4. 启动项目
-运行主启动类，项目默认端口为 8080。
+### 2. 数据库配置
+在 MySQL 中创建一个空的数据库，名称为 `simple_demo`。
+```sql
+CREATE DATABASE simple_demo CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
