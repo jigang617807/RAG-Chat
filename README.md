@@ -45,6 +45,7 @@
 
 ```sql
 CREATE DATABASE simple_demo CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+```
 
 *项目启动时，JPA 的 ddl-auto: update 配置会自动创建所需的数据表 (user, document, document\_chunk, conversation, chat\_message)。*
 
